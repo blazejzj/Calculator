@@ -1,5 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    /*
+        TODO
+        - float number
+        - starting negative number 
+        - too many numbers 
+    */
+
     function add(num1, num2) {
         return num1 + num2;
     }
@@ -29,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (num2 === 0) {alert("Can't divide by 0!")}
                 else {return divide(num1, num2);}
             default:
-                    alert("Something went wrong");
         }
     }
 
@@ -56,10 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
         result.textContent = "";
         displayCurrentChar("", false);
     }
-    
 
     const calculation = document.getElementById("calculation");
     const result = document.getElementById("result");
+    result.textContent = "0";
     const calculateBtn = document.getElementById("calculate");
     const clearBtn = document.getElementById("clear");
     const deleteBtn = document.getElementById("delete");
@@ -69,86 +75,64 @@ document.addEventListener("DOMContentLoaded", () => {
     let num2 = "";
     let operator = "";
     let currentNum = "";
-    let pressedNum = "";
 
     document.querySelectorAll(".number").forEach((button => {
         button.addEventListener("click", function() {
-            console.log(this.textContent);
+
+            if(operator === "" && num1 && !currentNum) {
+                num1 = "";
+                result.textContent = "0";
+                displayCurrentChar("", false);
+            }
             pressedNum = this.textContent;
             displayCurrentChar(pressedNum, true);
             currentNum += pressedNum; // assign current working number
-            console.log("current num " + currentNum)
-            pressedNum = "";
         })
     }))
 
     document.querySelectorAll(".operator").forEach((opBtn => {
         opBtn.addEventListener("click", function() {
-            operator = this.textContent; // assign the operator
-            displayCurrentChar(" " + operator + " ", true);
 
-            if (num1 === "") {
-                num1 = convertToNum(currentNum);
+            if (operator && num1 && currentNum) {
+                num2 = convertToNum(currentNum); // if ongoing operation, compute first
+                let calcResult = operate(num1, num2, operator);
+                result.textContent = calcResult;
+                num1 = calcResult;  // assign num1 as the result => for further calculations
+                currentNum = ""; // reset current num and num2
+                num2 = ""; 
+            } 
+            
+            else if (!num1 && currentNum) {
+                num1 = convertToNum(currentNum); 
                 currentNum = "";
-                console.log("assigned num1 " + num1)
-                
-            }
+            } 
 
-            else if (num1 !== "" && currentNum !== "") {
-                num2 = convertToNum(currentNum);
-                currentNum = "";
-                console.log("assigned num2 " + num2)
-            }
-
-        })
+            operator = this.textContent;
+            displayCurrentChar(num1 + " " + operator + " ", false);
+        });
     }));
 
+    
     calculateBtn.addEventListener("click", function() {
-
-        if (num2 === "") {
-            num2 = convertToNum(currentNum);
-            console.log("assigned num2 " + num2)
-        }
-
-        displayCurrentChar(" " + this.textContent + " ", true);
-
-        if (num1 !== "" && num2 !== "" && operator !== "") {
-            let calcResult = operate(num1, num2, operator);
-            result.textContent = calcResult;
-            console.log("result of calc " + calcResult)
+        if (num1 && currentNum  && operator) {
+            num2 = convertToNum(currentNum); // assign num2
+            let calcResult = operate(num1, num2, operator); // perform calculation
+            result.textContent = calcResult; // display calculation result
             num1 = calcResult; // work with the result from calculation before
-            calcResult = "";
-            result.textContent = calcResult;
-            displayCurrentChar(num1, false); // show previous result
+            displayCurrentChar("", false);
             num2 = "";
             currentNum = "";
             operator = "";
-            console.log("num1 after calculation " + num1)
-            console.log("num2 after calculation " + num2)
-            console.log("operator after calculation " + operator)
         }
     });
 
-    clearBtn.addEventListener("click", function() {
-        clearAll();
+    clearBtn.addEventListener("click", clearAll);
+
+    deleteBtn.addEventListener("click", () => {
+        if (currentNum.length > 0) {
+            currentNum = currentNum.slice(0, -1);
+            displayCurrentChar(num1 + " " + operator + " " + currentNum, false);
+        }
     });
-
-    deleteBtn.addEventListener("click", function() {
-        if (currentNum.length > 0 && num1 === "") {
-            currentNum = currentNum.slice(0, -1);
-            displayCurrentChar(currentNum, false);
-            console.log("current number after slice: " + currentNum);
-        }
-
-        else {
-            currentNum = currentNum.slice(0, -1);
-            console.log("current number after slice: " + currentNum);
-            displayCurrentChar("", false);
-            displayCurrentChar(num1, true);
-            displayCurrentChar(" " + operator + " ", true)
-            displayCurrentChar(" " + currentNum + " ", true);
-        }
-
-    })
 });
 
