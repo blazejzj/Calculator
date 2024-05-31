@@ -4,7 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
         TODO
         - float number
         - starting negative number 
-        - too many numbers 
+        - too many numbers - done
+        - round up numbers after divide - done
+        - font size with big numbers - done
     */
 
     function add(num1, num2) {
@@ -24,7 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function operate(num1, num2, operator) {
-
+        num1 = parseFloat(num1);
+        num2 = parseFloat(num2);
+    
         switch(operator) {
             case "+":
                 return add(num1, num2);
@@ -34,7 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return multiply(num1, num2);
             case "/":
                 if (num2 === 0) {alert("Can't divide by 0!")}
-                else {return divide(num1, num2);}
+                else {
+                    // return rounded up number
+                    return Math.round(divide(num1, num2) * 100) / 100;
+                }
             default:
         }
     }
@@ -46,7 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
         else {
             calculation.textContent = char;
         }
-        
+        resetFontSize();
+        adjustFontSize();
     }
 
     function convertToNum(num) {
@@ -63,6 +71,23 @@ document.addEventListener("DOMContentLoaded", () => {
         displayCurrentChar("", false);
     }
 
+    function adjustFontSize() {
+        var resultLength = result.innerText.length;
+        var calculationLength = calculation.innerText.length;
+        if (resultLength > 10 || calculationLength > 20) {
+            result.style.fontSize = "20px";
+            calculation.style.fontSize = "20px";
+        } else {
+            result.style.fontSize = "35";
+            calculation.style.fontSize = "35";
+        }
+    }
+    
+    function resetFontSize() {
+        result.style.fontSize = "35px";
+        calculation.style.fontSize = "35px";
+    }
+
     const calculation = document.getElementById("calculation");
     const result = document.getElementById("result");
     result.textContent = "0";
@@ -70,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearBtn = document.getElementById("clear");
     const deleteBtn = document.getElementById("delete");
     
-
     let num1 = "";
     let num2 = "";
     let operator = "";
@@ -87,6 +111,12 @@ document.addEventListener("DOMContentLoaded", () => {
             pressedNum = this.textContent;
             displayCurrentChar(pressedNum, true);
             currentNum += pressedNum; // assign current working number
+
+            // check if pressedNum is too long  - 10 digits
+            if (currentNum.length > 15) {
+                alert("ERROR! Too many numbers!");
+                clearAll();
+            }
         })
     }))
 
@@ -125,6 +155,8 @@ document.addEventListener("DOMContentLoaded", () => {
             operator = "";
         }
     });
+
+
 
     clearBtn.addEventListener("click", clearAll);
 
