@@ -74,12 +74,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function adjustFontSize() {
         var resultLength = result.innerText.length;
         var calculationLength = calculation.innerText.length;
-        if (resultLength > 10 || calculationLength > 20) {
-            result.style.fontSize = "20px";
-            calculation.style.fontSize = "20px";
-        } else {
-            result.style.fontSize = "35";
-            calculation.style.fontSize = "35";
+
+        if (resultLength > 10 || calculationLength > 10) {
+            result.style.fontSize = "20px"; 
+            calculation.style.fontSize = "20px"; 
+
+        } 
+        else {
+            result.style.fontSize = "35px"; 
+            calculation.style.fontSize = "35px"; 
         }
     }
     
@@ -155,8 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
             operator = "";
         }
     });
-
-
 
     clearBtn.addEventListener("click", clearAll);
 
